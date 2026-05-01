@@ -1,0 +1,8 @@
+./settings.go
+./addtask_4_test.go
+./app_1_test.go
+./db_2_test.go
+./nextdate_3_test.go
+./task_6_test.go
+./task_7_test.go
+./tasks_5_test.go
