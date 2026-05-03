@@ -9,7 +9,7 @@ COPY main.go ./
 COPY pkg ./pkg
 RUN CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build -o /out/todo-scheduler ./main.go
 
-FROM ubuntu:latest
+FROM alpine:latest
 
 WORKDIR /app
 
@@ -19,7 +19,5 @@ ENV TODO_DBFILE=/app/data/scheduler.db
 
 COPY --from=builder /out/todo-scheduler /app/todo-scheduler
 COPY web /app/web
-
-EXPOSE 7540
 
 CMD ["/app/todo-scheduler"]

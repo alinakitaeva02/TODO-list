@@ -2,9 +2,14 @@ package db
 
 import (
 	"database/sql"
-	"fmt"
+	"errors"
 	"time"
 )
+
+const dbDateFormat = "20060102"
+
+// ErrTaskNotFound возвращается при отсутствии задачи с указанным идентификатором
+var ErrTaskNotFound = errors.New("task not found")
 
 // Task описывает одну задачу планировщика, хранящуюся в базе данных и возвращаемую API
 // обработчиками. Идентификатор хранится в виде текста в ответах JSON
@@ -75,7 +80,7 @@ func SearchTasks(search string, limit int) ([]*Task, error) {
 	if err == nil {
 		rows, err := DB.Query(
 			`SELECT id, date, title, comment, repeat FROM scheduler WHERE date = ? ORDER BY date LIMIT ?`,
-			date.Format("20060102"),
+			date.Format(dbDateFormat),
 			limit,
 		)
 		if err != nil {
@@ -128,7 +133,7 @@ func GetTask(id string) (*Task, error) {
 	).Scan(&task.ID, &task.Date, &task.Title, &task.Comment, &task.Repeat)
 	if err != nil {
 		if err == sql.ErrNoRows {
-			return nil, fmt.Errorf("task not found")
+			return nil, ErrTaskNotFound
 		}
 		return nil, err
 	}
@@ -156,7 +161,7 @@ func UpdateTask(task *Task) error {
 		return err
 	}
 	if count == 0 {
-		return fmt.Errorf("incorrect id for updating task")
+		return ErrTaskNotFound
 	}
 
 	return nil
@@ -175,7 +180,7 @@ func UpdateDate(next string, id string) error {
 		return err
 	}
 	if count == 0 {
-		return fmt.Errorf("task not found")
+		return ErrTaskNotFound
 	}
 
 	return nil
@@ -195,7 +200,7 @@ func DeleteTask(id string) error {
 		return err
 	}
 	if count == 0 {
-		return fmt.Errorf("task not found")
+		return ErrTaskNotFound
 	}
 
 	return nil

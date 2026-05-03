@@ -3,10 +3,11 @@
 package main
 
 import (
-	"final_project/pkg/db"
-	"final_project/pkg/server"
 	"log"
 	"os"
+
+	"final_project/pkg/db"
+	"final_project/pkg/server"
 )
 
 // main считывает путь к базе данных из файла TODO_DBFILE, инициализирует хранилище и
@@ -19,11 +20,13 @@ func main() {
 	}
 
 	if err := db.Init(dbFile); err != nil {
-		log.Fatal(err)
+		log.Println(err)
+		return
 	}
 	defer db.DB.Close()
 
 	if err := server.StartServer("7540"); err != nil {
-		log.Fatal(err)
+		log.Println(err)
+		return
 	}
 }

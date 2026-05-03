@@ -41,6 +41,9 @@ func Init(dbFile string) error {
 
 	if install {
 		if _, err := DB.Exec(schema); err != nil {
+			if closeErr := DB.Close(); closeErr != nil {
+				return fmt.Errorf("failed to install database schema: %w (additionally failed to close database: %v)", err, closeErr)
+			}
 			return fmt.Errorf("failed to install database schema: %w", err)
 		}
 	}

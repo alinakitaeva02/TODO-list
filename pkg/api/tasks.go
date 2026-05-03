@@ -1,8 +1,9 @@
 package api
 
 import (
-	"final_project/pkg/db"
 	"net/http"
+
+	"final_project/pkg/db"
 )
 
 // TasksResp - это текст ответа в формате JSON для /api/tasks.
@@ -17,7 +18,7 @@ type TasksResp struct {
 // в формате JSON с полем error
 func TasksHandler(w http.ResponseWriter, r *http.Request) {
 	if r.Method != http.MethodGet {
-		writeJSON(w, map[string]string{"error": "method not allowed"})
+		writeJSONStatus(w, http.StatusMethodNotAllowed, map[string]string{"error": "method not allowed"})
 		return
 	}
 
@@ -27,7 +28,7 @@ func TasksHandler(w http.ResponseWriter, r *http.Request) {
 		tasks, err = db.SearchTasks(search, 50)
 	}
 	if err != nil {
-		writeJSON(w, map[string]string{"error": err.Error()})
+		writeError(w, http.StatusInternalServerError, err)
 		return
 	}
 
